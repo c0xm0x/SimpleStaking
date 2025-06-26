@@ -30,6 +30,10 @@ contract StakingGigaWei is Ownable {
         stakingToken = ERC20(_govToken);
     }
 
+    /**
+     * Receives and adds tokens to staking
+     * @param amount amount of tokens sent to stake
+     */
     function stake(uint amount) external {
         stakingToken.transferFrom(msg.sender, address(this), amount);
 
@@ -38,6 +42,11 @@ contract StakingGigaWei is Ownable {
 
         emit Staked(msg.sender, amount);
     }
+
+    /**
+     * Inititates the staking unlock period
+     * @param amount amount of tokens to unstake
+     */
 
     function requestUnstake(uint amount) external {
         require(
@@ -57,6 +66,10 @@ contract StakingGigaWei is Ownable {
         emit UnstakeRequested(msg.sender, amount);
     }
 
+    /**
+     * Claims the unlocked staking tokens
+     */
+
     function claim() public returns (uint) {
         uint amountClaimable = 0;
         for (uint i = 0; i <= unstakeCount[msg.sender]; i++) {
@@ -71,10 +84,18 @@ contract StakingGigaWei is Ownable {
         return amountClaimable;
     }
 
+    /**
+     * Returns user staked balance
+     * @param _user user address
+     */
     function stakedBalance(address _user) public view returns (uint) {
         return stakes[_user].amount;
     }
 
+    /**
+     * Returns the amount of unstaked tokens already claimable
+     * @param _user user address
+     */
     function claimable(address _user) public view returns (uint) {
         uint amountClaimable = 0;
         for (uint i = 0; i <= unstakeCount[_user]; i++) {
